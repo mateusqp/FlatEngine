@@ -5,20 +5,20 @@ using Flat;
 using Flat.Graphics;
 using Flat.Input;
 using System.Diagnostics;
+using System;
 
 namespace Game_0
 {
     public class Game1 : Game
     {
+        //
         private GraphicsDeviceManager _graphics;
         private Sprites sprites;
         private Screen screen;
         private Texture2D texture;
 
         private Shapes shapes;
-
-        private float x = 0;
-        private Stopwatch stopwatch;
+        //
         
         public Game1()
         {
@@ -32,6 +32,7 @@ namespace Game_0
 
         protected override void Initialize()
         {
+            //
             this._graphics.PreferredBackBufferWidth = 1280;
             this._graphics.PreferredBackBufferHeight = 600;
             this._graphics.ApplyChanges();
@@ -39,6 +40,11 @@ namespace Game_0
             this.sprites = new Sprites(this);
             this.screen = new Screen(this, 640, 480);
             this.shapes = new Shapes(this);
+            //
+
+
+
+
             base.Initialize();
         }
 
@@ -49,15 +55,40 @@ namespace Game_0
 
         protected override void Update(GameTime gameTime)
         {
-            FlatKeyboard keyboard = FlatKeyboard.Instance;
+            FlatKeyboard keyboard = FlatKeyboard.Instance;            
             keyboard.Update();
 
-            if (keyboard.IsKeyClicked(Keys.Escape))
+            FlatMouse mouse = FlatMouse.Instance;
+            mouse.Update();
+
+            if (mouse.IsLeftButtonClicked())
+            {
+                Console.WriteLine("Left button clicked.");
+                
+            }
+            if (mouse.IsMiddleButtonClicked())
+            {
+                Console.WriteLine("Middle button clicked.");
+
+            }
+            if (mouse.IsRightButtonClicked())
+            {
+                Console.WriteLine("Right button clicked.");
+
+            }
+
+            if (keyboard.IsKeyDown(Keys.Q))
+            {
+                Console.WriteLine("Mouse window position: " + mouse.WindowPosition);
+                Console.WriteLine("Mouse screen position: " + mouse.GetScreenPosition(this.screen));
+            }
+
+            if (keyboard.IsKeyClicked(Keys.Escape)) 
                 Exit();
             
             if (keyboard.IsKeyDown(Keys.D))
             {
-                x += 3;
+                
             }
 
             base.Update(gameTime);
@@ -75,7 +106,7 @@ namespace Game_0
 
             this.sprites.Begin(false); 
             
-            this.sprites.Draw(texture, null, new Rectangle((int)x, 32, 40, 40), Color.White);
+            this.sprites.Draw(texture, null, new Rectangle((int)35, 62, 40, 40), Color.White);
 
             this.sprites.End();
 
@@ -83,9 +114,7 @@ namespace Game_0
 
             this.shapes.Begin();
 
-            this.shapes.DrawRectangle(x, 130, 30, 45, Color.Red);
-            this.shapes.DrawRectangle(450, 150, 260, 95, Color.DarkCyan);
-            this.shapes.DrawLine(new Vector2(24, 32), new Vector2(48, 150), 5f, Color.Black);
+            
 
             this.shapes.End();
 

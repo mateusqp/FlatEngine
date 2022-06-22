@@ -86,7 +86,7 @@ namespace Flat.Graphics
             sprites.End();
         }
 
-        private Rectangle CalculateDestinationRectangle()
+        internal Rectangle CalculateDestinationRectangle()
         {
             Rectangle backbufferBounds = this.game.GraphicsDevice.PresentationParameters.Bounds;
             float backbufferAspectRatio = (float)backbufferBounds.Width / backbufferBounds.Height;
