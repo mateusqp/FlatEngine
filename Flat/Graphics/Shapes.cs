@@ -63,15 +63,26 @@ namespace Flat.Graphics
             this.isDisposed = true; 
         }
 
-        public void Begin()
+        public void Begin(Camera camera)
         {
             if (this.isStarted)
             {
                 throw new Exception("Batching already started.");
             }
 
-            Viewport vp = this.game.GraphicsDevice.Viewport;
-            this.effect.Projection = Matrix.CreateOrthographicOffCenter(0, vp.Width, 0, vp.Height, 0f, 1f);
+            if (camera is null)
+            {
+                Viewport vp = this.game.GraphicsDevice.Viewport;
+                this.effect.Projection = Matrix.CreateOrthographicOffCenter(0, vp.Width, 0, vp.Height, 0f, 1f);
+                this.effect.View = Matrix.Identity;
+            }
+            else
+            {
+                camera.UpdateMatrices();
+                this.effect.View = camera.View;
+                this.effect.Projection = camera.Projection;
+            }
+            
 
             this.isStarted = true;
         }

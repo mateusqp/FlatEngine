@@ -16,8 +16,9 @@ namespace Game_0
         private Sprites sprites;
         private Screen screen;
         private Texture2D texture;
-
         private Shapes shapes;
+
+        private Camera camera;
         //
         
         public Game1()
@@ -38,8 +39,9 @@ namespace Game_0
             this._graphics.ApplyChanges();
 
             this.sprites = new Sprites(this);
-            this.screen = new Screen(this, 640, 480);
+            this.screen = new Screen(this, 1280, 720);
             this.shapes = new Shapes(this);
+            this.camera = new Camera(this.screen);
             //
 
 
@@ -82,6 +84,20 @@ namespace Game_0
                 Console.WriteLine("Mouse window position: " + mouse.WindowPosition);
                 Console.WriteLine("Mouse screen position: " + mouse.GetScreenPosition(this.screen));
             }
+            if (keyboard.IsKeyDown(Keys.Z))
+            {
+                this.camera.IncZoom();
+            }
+            if (keyboard.IsKeyDown(Keys.X))
+            {
+                this.camera.DecZoom();
+            }
+            if (keyboard.IsKeyDown(Keys.C))
+            {
+                this.camera.GetExtents(out Vector2 min, out Vector2 max); // Centro da câmera é coordenada (0,0)
+                Console.WriteLine("Camera min: " + min);
+                Console.WriteLine("Camera max: " + max);
+            }
 
             if (keyboard.IsKeyClicked(Keys.Escape)) 
                 Exit();
@@ -104,7 +120,7 @@ namespace Game_0
             Viewport vp = this.GraphicsDevice.Viewport;
 
 
-            this.sprites.Begin(false); 
+            this.sprites.Begin(this.camera, false); 
             
             this.sprites.Draw(texture, null, new Rectangle((int)35, 62, 40, 40), Color.White);
 
@@ -112,7 +128,7 @@ namespace Game_0
 
 
 
-            this.shapes.Begin();
+            this.shapes.Begin(this.camera);
 
             
 

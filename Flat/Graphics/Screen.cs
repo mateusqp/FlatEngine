@@ -81,7 +81,7 @@ namespace Flat.Graphics
 
             Rectangle destinationRectangle = this.CalculateDestinationRectangle();
 
-            sprites.Begin(textureFiltering);
+            sprites.Begin(null, textureFiltering);
             sprites.Draw(this.target, null, destinationRectangle, Color.White);
             sprites.End();
         }
