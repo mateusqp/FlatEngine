@@ -35,6 +35,11 @@ namespace Flat.Graphics
             get { return this.z; }
         }
 
+        public float BaseZ
+        {
+            get { return this.baseZ; }
+        }
+
         public Matrix View
         {
             get { return this.view; }

@@ -1,9 +1,16 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace Flat
 {
     public static class Util
     {
+        public static void ToggleFullScreen(GraphicsDeviceManager graphics)
+        {
+            graphics.HardwareModeSwitch = false;
+            graphics.ToggleFullScreen();
+        }
         public static int Clamp(int value, int min, int max)
         {
             if (min > max)

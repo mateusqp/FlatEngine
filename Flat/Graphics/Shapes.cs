@@ -22,6 +22,10 @@ namespace Flat.Graphics
 
         private bool isStarted;
 
+        private Camera camera;
+
+        
+
         public Shapes(Game game) //access to graphics device inside Game class.
         {
             this.isDisposed = false;
@@ -50,6 +54,8 @@ namespace Flat.Graphics
             this.indexCount = 0;
 
             this.isStarted = false;
+
+            this.camera = null;
         }
 
         public void Dispose()
@@ -70,7 +76,7 @@ namespace Flat.Graphics
                 throw new Exception("Batching already started.");
             }
 
-            if (camera is null)
+            if (camera is null) //sem zoom
             {
                 Viewport vp = this.game.GraphicsDevice.Viewport;
                 this.effect.Projection = Matrix.CreateOrthographicOffCenter(0, vp.Width, 0, vp.Height, 0f, 1f);
@@ -82,7 +88,8 @@ namespace Flat.Graphics
                 this.effect.View = camera.View;
                 this.effect.Projection = camera.Projection;
             }
-            
+
+            this.camera = camera;
 
             this.isStarted = true;
         }
@@ -152,7 +159,63 @@ namespace Flat.Graphics
             }
         }
 
-        public void DrawRectangle(float x, float y, float width, float height, Color color)
+        public void DrawRectangle(float x, float y, float width, float height, float thickness, Color color)
+        {
+            float left = x;
+            float right = x + width;
+            float bottom = y;
+            float top = y + height;
+
+            this.DrawLine(left, top, right, top, thickness, color);
+            this.DrawLine(right, top, right, bottom, thickness, color);
+            this.DrawLine(right, bottom, right, top, thickness, color);
+            this.DrawLine(left, bottom, left, top, thickness, color);
+        }
+
+        public void DrawCircle(float x, float y, float radius, int points, float thickness, Color color)
+        {
+            const int minPoints = 3;
+            const int maxPoints = 256;
+
+            points = Util.Clamp(points, minPoints, maxPoints);
+            
+            float rotation = MathHelper.TwoPi / (float)points;
+
+            float sin = MathF.Sin(rotation);
+            float cos = MathF.Cos(rotation);
+
+            float ax = radius;
+            float ay = 0f;
+
+            float bx = 0f;
+            float by = 0f;
+
+            for (int i = 0; i < points; i++)
+            {
+                bx = cos * ax - sin * ay;
+                by = sin * ax + cos * ay;
+                
+
+                this.DrawLine(ax + x, ay + y, bx + x, by + y, thickness, color);
+
+                ax = bx;
+                ay = by;
+            }
+        }
+
+        public void DrawPolygon(Vector2[] vertices, float thickness, Color color)
+        {
+            for (int i = 0; i < vertices.Length; i++)
+            {
+                Vector2 a = vertices[i];
+                Vector2 b = vertices[(i + 1) % vertices.Length];
+
+                this.DrawLine(a, b, thickness, color);
+            }
+        }
+
+
+        public void DrawRectangleFill(float x, float y, float width, float height, Color color)
         {
             this.EnsureStarted();
 
@@ -201,6 +264,11 @@ namespace Flat.Graphics
 
             thickness = Util.Clamp(thickness, Shapes.MinLineThickness, Shapes.MaxLineThickness);
             thickness++;
+
+            if (this.camera != null)
+            {
+                thickness *= (this.camera.Z / this.camera.BaseZ);
+            }
 
             float halfThickness = thickness / 2f;
 
@@ -254,6 +322,12 @@ namespace Flat.Graphics
             thickness = Util.Clamp(thickness, Shapes.MinLineThickness, Shapes.MaxLineThickness);
             thickness++;
 
+            if (this.camera != null)
+            {
+                thickness *= (this.camera.Z / this.camera.BaseZ); //Mantem thickness da linha quando muda zoom
+            }
+
+
             float halfThickness = thickness / 2f;
 
             float e1x = bx - ax;
@@ -295,9 +369,9 @@ namespace Flat.Graphics
 
 
             this.vertices[this.vertexCount++] = new VertexPositionColor(new Vector3(q1x, q1y, 0f), color);
-            this.vertices[this.vertexCount++] = new VertexPositionColor(new Vector3(q1x, q1y, 0f), color);
-            this.vertices[this.vertexCount++] = new VertexPositionColor(new Vector3(q1x, q1y, 0f), color);
-            this.vertices[this.vertexCount++] = new VertexPositionColor(new Vector3(q1x, q1y, 0f), color);
+            this.vertices[this.vertexCount++] = new VertexPositionColor(new Vector3(q2x, q2y, 0f), color);
+            this.vertices[this.vertexCount++] = new VertexPositionColor(new Vector3(q3x, q3y, 0f), color);
+            this.vertices[this.vertexCount++] = new VertexPositionColor(new Vector3(q4x, q4y, 0f), color);
 
             this.shapeCount++;
 
