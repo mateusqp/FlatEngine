@@ -61,5 +61,29 @@ namespace Flat
             y *= invLen;
         }
 
+        //public static Vector2 TransformSlow(Vector2 position, FlatTransform transform)
+        //{
+        //    //Scale:
+        //    float sx = position.X * transform.ScaleX;
+        //    float sy = position.Y * transform.ScaleY;
+
+        //    //Rotation:
+        //    float rx = sx * transform.Cos - sy * transform.Sin;
+        //    float ry = sx * transform.Sin + sy * transform.Cos;
+
+        //    //Translation:
+        //    float tx = rx + transform.PosX;
+        //    float ty = ry + transform.PosY;
+
+        //    return new Vector2(tx, ty);
+        //}
+
+        public static Vector2 Transform(Vector2 position, FlatTransform transform)
+        {
+            return new Vector2(
+                position.X * transform.CosScaleX - position.Y * transform.SinScaleY + transform.PosX, 
+                position.X * transform.SinScaleX + position.Y * transform.CosScaleY + transform.PosY);
+        }
+
     }
 }

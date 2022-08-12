@@ -32,6 +32,7 @@ namespace Game_0
         Stopwatch watchKeyLimiter = new Stopwatch();
         //
 
+        public float rotationTest = 0f;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -128,7 +129,7 @@ namespace Game_0
             
             if (keyboard.IsKeyDown(Keys.D))
             {
-                
+                rotationTest += 0.1f;
             }
 
             if (keyboard.IsKeyDown(Keys.F))
@@ -188,9 +189,15 @@ namespace Game_0
             }
             //this.shapes.DrawRectangleFill(150f, 150f, 150f, 300f, Color.Red);
 
+
+            // A ORDEM DA TRANSFORM IMPORTA: 1º SCALE, 2º ROTATION, 3º TRANSLATION;
+            //Matrix transform = Matrix.CreateScale(0.5f) * Matrix.CreateRotationZ(rotationTest) * Matrix.CreateTranslation(0f, 0f, 0f);
+            FlatTransform transform = new FlatTransform(new Vector2(0f, 0f), rotationTest, 0.3f);
+            //
+
             this.shapes.DrawCircle(50, 50, 62, 32, 2, Color.RosyBrown);
             this.shapes.DrawLine(new Vector2(0, 0), new Vector2(50, 50), 15, Color.RosyBrown);
-            this.shapes.DrawPolygon(vertices, 4, Color.WhiteSmoke);
+            this.shapes.DrawPolygon(vertices, transform, 4, Color.WhiteSmoke);
 
             this.shapes.End();
 

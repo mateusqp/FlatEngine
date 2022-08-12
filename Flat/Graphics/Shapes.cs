@@ -203,12 +203,15 @@ namespace Flat.Graphics
             }
         }
 
-        public void DrawPolygon(Vector2[] vertices, float thickness, Color color)
+        public void DrawPolygon(Vector2[] vertices, FlatTransform transform, float thickness, Color color)
         {
             for (int i = 0; i < vertices.Length; i++)
             {
                 Vector2 a = vertices[i];
                 Vector2 b = vertices[(i + 1) % vertices.Length];
+
+                a = Util.Transform(a, transform);
+                b = Util.Transform(b, transform);
 
                 this.DrawLine(a, b, thickness, color);
             }
